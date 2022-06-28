@@ -8,20 +8,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class StorageImpl implements Storage<UserIdWithTimestamp> {
 
-    private final HashMap<String, Set<UserIdWithTimestamp>> eventToUsersMap = new HashMap<>();
+    private final ConcurrentHashMap<String, Set<UserIdWithTimestamp>> eventToUsersMap = new ConcurrentHashMap<>();
 
     @Override
     public boolean storeEvent(Event event) {
-        if(eventToUsersMap.containsKey(event.getEventId())){
-            eventToUsersMap.get(event.getEventId()).add(new UserIdWithTimestamp(event));
-        } else {
-            eventToUsersMap.computeIfAbsent(event.getEventId(), k-> new HashSet<>())
-                    .add(new UserIdWithTimestamp(event));
-        }
+        eventToUsersMap.compute(event.getEventId(), (key, value) -> putEventToMap(value, event));
         return true;
     }
 
@@ -30,5 +26,13 @@ public class StorageImpl implements Storage<UserIdWithTimestamp> {
         return eventToUsersMap;
     }
 
-
+    private Set<UserIdWithTimestamp> putEventToMap(Set<UserIdWithTimestamp> value, Event event) {
+        if(value != null){
+            value.add(new UserIdWithTimestamp(event));
+            return value;
+        }
+        Set<UserIdWithTimestamp> usersWithTimestamp = new HashSet<>();
+        usersWithTimestamp.add(new UserIdWithTimestamp(event));
+        return usersWithTimestamp;
+    }
 }

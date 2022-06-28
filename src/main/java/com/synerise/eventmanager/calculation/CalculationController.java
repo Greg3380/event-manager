@@ -20,7 +20,7 @@ public class CalculationController {
 
     @GetMapping("/{eventId}")
     public ResponseEntity<Map<String, Integer>> registerEvent(@PathVariable String eventId, @RequestParam Integer n) {
-        if(n < maxEventLifetime) {
+        if(n > maxEventLifetime) {
             return ResponseEntity.badRequest().build();
         }
         Integer uniqueUserCountByEvent = calculationService.getUniqueUserCountByEvent(eventId, n);
@@ -32,7 +32,7 @@ public class CalculationController {
 
     @GetMapping("/all")
     public ResponseEntity<Map<String, Integer>> registerEvent(@RequestParam Integer n) {
-        if(n < maxEventLifetime) {
+        if(n > maxEventLifetime) {
             return ResponseEntity.badRequest().build();
         }
         Map<String, Integer> eventToUserCountMap = calculationService.getEventToUserCountMap(n);
