@@ -1,5 +1,7 @@
 package com.synerise.eventmanager.registration;
 
+import com.synerise.eventmanager.registration.model.RegisterEventRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,15 +11,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/register")
 public class RegistrationController {
 
-    private final RegistrationService registrationService;
+    private final RegistrationServiceImpl registrationService;
 
-    public RegistrationController(RegistrationService registrationService) {
+    public RegistrationController(RegistrationServiceImpl registrationService) {
         this.registrationService = registrationService;
     }
 
     @PostMapping("/event")
-    public void registerEvent(@RequestBody RegisterEventRequest registerEventRequest) {
-        registrationService.registerEvent(registerEventRequest);
+    public ResponseEntity<Boolean> registerEvent(@RequestBody RegisterEventRequest registerEventRequest) {
+        boolean result = registrationService.registerEvent(registerEventRequest);
+        return ResponseEntity.ok(result);
     }
 
 }
