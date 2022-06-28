@@ -5,6 +5,8 @@ import com.synerise.eventmanager.registration.model.Event;
 import com.synerise.eventmanager.registration.model.EventWithTimestamp;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +24,14 @@ public class EventRepository {
 
     public Map<String, List<EventWithTimestamp>> getItems() {
         return storage.getItems();
+    }
+
+    public void purgeOutdatedEvents(Integer minutesInPast) {
+        storage.getItems().forEach((k,v) -> removeOutdatedEvents(v, minutesInPast));
+    }
+
+    private void removeOutdatedEvents(List<EventWithTimestamp> events, Integer minutesInPast) {
+        events.removeIf(event -> LocalDateTime.now().minus(minutesInPast, ChronoUnit.MINUTES).isAfter(event.getTimestamp()));
     }
 
 }
