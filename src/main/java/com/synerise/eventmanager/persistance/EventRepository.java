@@ -1,20 +1,19 @@
 package com.synerise.eventmanager.persistance;
 
-import com.synerise.eventmanager.persistance.Storage;
 import com.synerise.eventmanager.registration.model.Event;
-import com.synerise.eventmanager.registration.model.EventWithTimestamp;
+import com.synerise.eventmanager.registration.model.UserIdWithTimestamp;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Repository
 public class EventRepository {
-    private final Storage<EventWithTimestamp> storage;
+    private final Storage<UserIdWithTimestamp> storage;
 
-    public EventRepository(Storage<EventWithTimestamp> storage) {
+    public EventRepository(Storage<UserIdWithTimestamp> storage) {
         this.storage = storage;
     }
 
@@ -22,7 +21,7 @@ public class EventRepository {
         return this.storage.storeEvent(event);
     }
 
-    public Map<String, List<EventWithTimestamp>> getItems() {
+    public Map<String, Set<UserIdWithTimestamp>> getItems() {
         return storage.getItems();
     }
 
@@ -30,7 +29,7 @@ public class EventRepository {
         storage.getItems().forEach((k,v) -> removeOutdatedEvents(v, minutesInPast));
     }
 
-    private void removeOutdatedEvents(List<EventWithTimestamp> events, Integer minutesInPast) {
+    private void removeOutdatedEvents(Set<UserIdWithTimestamp> events, Integer minutesInPast) {
         events.removeIf(event -> LocalDateTime.now().minus(minutesInPast, ChronoUnit.MINUTES).isAfter(event.getTimestamp()));
     }
 

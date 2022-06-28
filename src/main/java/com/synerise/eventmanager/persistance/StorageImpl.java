@@ -1,33 +1,33 @@
 package com.synerise.eventmanager.persistance;
 
 import com.synerise.eventmanager.registration.model.Event;
-import com.synerise.eventmanager.registration.model.EventWithTimestamp;
+import com.synerise.eventmanager.registration.model.UserIdWithTimestamp;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Component
-public class StorageImpl implements Storage<EventWithTimestamp> {
+public class StorageImpl implements Storage<UserIdWithTimestamp> {
 
-    private final HashMap<String, List<EventWithTimestamp>> userToEventMap = new HashMap<>();
+    private final HashMap<String, Set<UserIdWithTimestamp>> eventToUsersMap = new HashMap<>();
 
     @Override
     public boolean storeEvent(Event event) {
-        userToEventMap.computeIfAbsent(event.getUserId(), k-> new ArrayList<>())
-                .add(new EventWithTimestamp(event));
-
-        if(userToEventMap.containsKey(event.getEventId())){
-            userToEventMap.get(event.getEventId()).add(new EventWithTimestamp(event));
+        if(eventToUsersMap.containsKey(event.getEventId())){
+            eventToUsersMap.get(event.getEventId()).add(new UserIdWithTimestamp(event));
+        } else {
+            eventToUsersMap.computeIfAbsent(event.getEventId(), k-> new HashSet<>())
+                    .add(new UserIdWithTimestamp(event));
         }
         return true;
     }
 
     @Override
-    public Map<String, List<EventWithTimestamp>> getItems() {
-        return userToEventMap;
+    public Map<String, Set<UserIdWithTimestamp>> getItems() {
+        return eventToUsersMap;
     }
 
 

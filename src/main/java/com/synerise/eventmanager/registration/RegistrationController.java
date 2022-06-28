@@ -19,8 +19,12 @@ public class RegistrationController {
 
     @PostMapping("/event")
     public ResponseEntity<Boolean> registerEvent(@RequestBody RegisterEventRequest registerEventRequest) {
-        boolean result = registrationService.registerEvent(registerEventRequest);
-        return ResponseEntity.ok(result);
+        try {
+            boolean result = registrationService.registerEvent(registerEventRequest);
+            return ResponseEntity.ok(result);
+        } catch (RuntimeException exception) {
+            return ResponseEntity.internalServerError().body(Boolean.FALSE);
+        }
     }
 
 }
