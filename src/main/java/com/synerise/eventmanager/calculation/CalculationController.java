@@ -15,9 +15,9 @@ public class CalculationController {
     private final CalculationService calculationService;
 
     @GetMapping("/{eventId}")
-    public ResponseEntity<Integer> registerEvent(@PathVariable String eventId, @RequestParam Integer n) {
+    public ResponseEntity<Map<String, Integer>> registerEvent(@PathVariable String eventId, @RequestParam Integer n) {
         Integer uniqueUserCountByEvent = calculationService.getUniqueUserCountByEvent(eventId, n);
-        return ResponseEntity.ok(uniqueUserCountByEvent);
+        return ResponseEntity.ok(Map.of(eventId, uniqueUserCountByEvent));
     }
 
     @GetMapping("/all")
