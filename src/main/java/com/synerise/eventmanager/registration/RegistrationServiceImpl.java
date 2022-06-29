@@ -8,18 +8,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class RegistrationServiceImpl implements RegistrationService {
 
-    private final EventRepository registrationRepository;
+    private final EventRepository eventRepository;
     private final EventMapper eventMapper;
 
-    public RegistrationServiceImpl(EventRepository registrationRepository, EventMapper eventMapper) {
-        this.registrationRepository = registrationRepository;
+    public RegistrationServiceImpl(EventRepository eventRepository, EventMapper eventMapper) {
+        this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
     }
 
     @Override
     public Boolean registerEvent(RegisterEventRequest request) {
-        return this.registrationRepository.saveEvent(
+        return this.eventRepository.saveEvent(
                 this.eventMapper.map(request));
     }
-
 }
